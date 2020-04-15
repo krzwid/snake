@@ -13,6 +13,8 @@ public class Field extends Pane {
     Food food;
 
     int score = 0;
+    int highestScore = 0;
+    int speeding = 5;
 
     public Field(int width, int height) {
         this.fieldWidth = width;
@@ -62,6 +64,7 @@ public class Field extends Pane {
             score += 1;
             removeFood();
             addFood();
+            growSnake();
         }
     }
 
@@ -70,11 +73,51 @@ public class Field extends Pane {
         blocks.add(body);
     }
 
+    public void growSnake() {
+        Block tail = new Block(snake.tail.oldPositionX, snake.tail.oldPositionY, snake.tail, this);
+        tail.setFill(Color.GREEN);
+        snake.tail = tail;
+
+        addBlock(tail);
+    }
+
     public boolean isEaten(Food food) {
         if (food == null){
             return false;
         }
-        return snake.head.positionX == food.positionX
-                && snake.head.positionY == food.positionY;
+        updateHighScore();
+
+        if (snake.head.positionX == food.positionX && snake.head.positionY == food.positionY) {
+            needMoreSpeed();
+
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isDead() {
+        for (Block body : blocks) {
+            if(body == snake.head) continue;
+            if (snake.head.positionX == body.positionX && snake.head.positionY == body.positionY) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void updateHighScore() {
+        if (score > highestScore) {
+            highestScore = score;
+        }
+    }
+
+    public boolean checkHighestScore() {
+        return highestScore != 0 && score == highestScore;
+    }
+
+    public void needMoreSpeed() {
+        if (score % 3 == 2) {
+            speeding += 2;
+        }
     }
 }

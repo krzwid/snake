@@ -10,6 +10,7 @@ public class Snake {
     ArrayList<Block> blocks = new ArrayList<Block>();
 
     Block head;
+    Block tail;
 
     public Snake(int initialLength, Field field) {
         int initialPositionX = field.getFieldWidth() / 2;
@@ -18,12 +19,12 @@ public class Snake {
         blocks.add(head);
         head.setFill(Color.BLUE);
 
-        Block previous = head;
+        tail = head;
         for(int i=1; i<initialLength; i++){
-            Block body = new Block(initialPositionX-i, initialPositionY, previous, field);
+            Block body = new Block(initialPositionX-i, initialPositionY, tail, field);
             body.setFill(Color.GREEN);
             blocks.add(body);
-            previous = body;
+            tail = body;
         }
     }
 
