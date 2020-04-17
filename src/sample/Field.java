@@ -37,9 +37,19 @@ public class Field extends Pane {
 
     public void addFood() {
         Random rand = new Random();
-        int positionX = rand.nextInt(fieldWidth-1);
-        int positionY = rand.nextInt(fieldHeight-1);
-
+        boolean foodOnSnake;
+        int positionX, positionY;
+        do{
+            foodOnSnake = false;
+            positionX = rand.nextInt(fieldWidth-1);
+            positionY = rand.nextInt(fieldHeight-1);
+            for (Block body: blocks){
+                if (body.positionX == positionX && body.positionY == positionY) {
+                    foodOnSnake = true;
+                    break;
+                }
+            }
+        }while(foodOnSnake);
         Food f = new Food(positionX,positionY);
         getChildren().add(f);
         food = f;

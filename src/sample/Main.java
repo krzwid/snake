@@ -18,11 +18,11 @@ public class Main extends Application {
 
     static final int BLOCK_SIZE = 20;
 
-    int width = 30;
-    int height = 30;
+    int width = 25;
+    int height = 25;
 
 
-    int initialLength = 20;
+    int initialLength = 2;
     long then = System.nanoTime();
     Field field = new Field(width, height);
     @Override
