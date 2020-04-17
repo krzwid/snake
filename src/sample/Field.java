@@ -9,9 +9,10 @@ import java.util.Random;
 public class Field extends Pane {
     int fieldWidth, fieldHeight;
     ArrayList<Block> blocks = new ArrayList<>();
+    ExtraFood extraFood;
     Snake snake;
-    Food food;
-
+    ArrayList<Food> foods = new ArrayList<>();
+    int howManyFood = 1;
     int score = 0;
     int highestScore = 0;
     int speeding = 5;
@@ -36,27 +37,36 @@ public class Field extends Pane {
     }
 
     public void addFood() {
-        Random rand = new Random();
-        boolean foodOnSnake;
-        int positionX, positionY;
-        do{
-            foodOnSnake = false;
-            positionX = rand.nextInt(fieldWidth-1);
-            positionY = rand.nextInt(fieldHeight-1);
-            for (Block body: blocks){
-                if (body.positionX == positionX && body.positionY == positionY) {
-                    foodOnSnake = true;
-                    break;
+        int toAdd = howManyFood - foods.size();
+        for(int i=0; i<toAdd; i++) {
+            Random rand = new Random();
+            boolean foodOnSnake;
+            int positionX, positionY;
+            do {
+                foodOnSnake = false;
+                positionX = rand.nextInt(fieldWidth - 1);
+                positionY = rand.nextInt(fieldHeight - 1);
+                for (Block body : blocks) {
+                    if (body.positionX == positionX && body.positionY == positionY) {
+                        foodOnSnake = true;
+                        break;
+                    }
                 }
-            }
-        }while(foodOnSnake);
-        Food f = new Food(positionX,positionY);
-        getChildren().add(f);
-        food = f;
+            } while (foodOnSnake);
+            Food f = new Food(positionX, positionY);
+            getChildren().add(f);
+            foods.add(f);
+        }
     }
 
-    public void removeFood() {
+    public void removeFood(Food food) {
         getChildren().remove(food);
+        foods.remove(food);
+    }
+
+    public void removeExtraFood(ExtraFood extraFood) {
+        getChildren().remove(extraFood);
+        extraFood = null;
     }
 
     public void addSnake(Snake snake) {
@@ -70,9 +80,13 @@ public class Field extends Pane {
         for (Block body : blocks) {
             body.update();
         }
-        if (isEaten(food)){
-            score += 1;
-            removeFood();
+        if (isEaten() || isEatenExtraFood()){
+            if(score % 5 == 0) {
+                howManyFood++;
+            }
+            if (score % 10 == 0){
+                addExtraFood();
+            }
             addFood();
             growSnake();
         }
@@ -91,19 +105,23 @@ public class Field extends Pane {
         addBlock(tail);
     }
 
-    public boolean isEaten(Food food) {
-        if (food == null){
+    public boolean isEaten() {
+        if (foods == null) {
             return false;
         }
         updateHighScore();
+        for (Food food : foods) {
+            if (snake.head.positionX == food.positionX && snake.head.positionY == food.positionY) {
+                needMoreSpeed();
+                removeFood(food);
+                score+=1;
+                return true;
+            }
 
-        if (snake.head.positionX == food.positionX && snake.head.positionY == food.positionY) {
-            needMoreSpeed();
-
-            return true;
         }
         return false;
     }
+
 
     public boolean isDead() {
         for (Block body : blocks) {
@@ -127,7 +145,42 @@ public class Field extends Pane {
 
     public void needMoreSpeed() {
         if (score % 3 == 2) {
-            speeding += 2;
+            speeding += 3;
         }
     }
+
+    public void addExtraFood() {
+        Random rand = new Random();
+        boolean foodOnSnake;
+        int positionX, positionY;
+        do {
+            foodOnSnake = false;
+            positionX = rand.nextInt(fieldWidth - 1);
+            positionY = rand.nextInt(fieldHeight - 1);
+            for (Block body : blocks) {
+                if (body.positionX == positionX && body.positionY == positionY) {
+                    foodOnSnake = true;
+                    break;
+                }
+            }
+        } while (foodOnSnake);
+        ExtraFood ef = new ExtraFood(positionX, positionY);
+        getChildren().add(ef);
+        extraFood = ef;
+    }
+
+    public boolean isEatenExtraFood() {
+        if (extraFood == null) {
+            return false;
+        }
+        updateHighScore();
+        if (snake.head.positionX == extraFood.positionX && snake.head.positionY == extraFood.positionY) {
+            needMoreSpeed();
+            removeExtraFood(extraFood);
+            score += 2;
+            return true;
+        }
+        return false;
+    }
+
 }

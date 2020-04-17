@@ -21,6 +21,7 @@ public class Main extends Application {
     int width = 25;
     int height = 25;
 
+    boolean changed = false;
 
     int initialLength = 2;
     long then = System.nanoTime();
@@ -44,6 +45,7 @@ public class Main extends Application {
                     field.update();
                     then = now;
                     scoreLabel.setText("Score: " + field.score);
+                    changed = false;
                     highestScoreLabel.setText("Highest score: " + field.highestScore);
                     if (field.isDead()) {
                         stop();
@@ -88,19 +90,19 @@ public class Main extends Application {
 
         scene.setOnKeyPressed(e->{
             if (e.getCode() == KeyCode.UP && field.snake.head.direction != Direction.SOUTH) {
-                field.snake.setDirection(Direction.NORTH);
+                setDirection(field.snake, Direction.NORTH);
             }
 
             if (e.getCode() == KeyCode.DOWN && field.snake.head.direction != Direction.NORTH) {
-                field.snake.setDirection(Direction.SOUTH);
+                setDirection(field.snake, Direction.SOUTH);
             }
 
             if (e.getCode() == KeyCode.LEFT && field.snake.head.direction != Direction.EAST) {
-                field.snake.setDirection(Direction.WEST);
+                setDirection(field.snake, Direction.WEST);
             }
 
             if (e.getCode() == KeyCode.RIGHT && field.snake.head.direction != Direction.WEST) {
-                field.snake.setDirection(Direction.EAST);
+                setDirection(field.snake, Direction.EAST);
             }
         });
 
@@ -108,6 +110,13 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Snake game");
         primaryStage.show();
+    }
+
+    public void setDirection(Snake snake, Direction direction){
+        if(!changed){
+            snake.setDirection(direction);
+            changed = true;
+        }
     }
 
 
