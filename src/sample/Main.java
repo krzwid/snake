@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    static final int BLOCK_SIZE = 20;
+    public static final int BLOCK_SIZE = 20;
 
     int width = 25;
     int height = 25;

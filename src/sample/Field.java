@@ -2,6 +2,8 @@ package sample;
 
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import sample.food.BasicFood;
+import sample.food.ExtraFood;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -11,7 +13,7 @@ public class Field extends Pane {
     ArrayList<Block> blocks = new ArrayList<>();
     ExtraFood extraFood;
     Snake snake;
-    ArrayList<Food> foods = new ArrayList<>();
+    ArrayList<BasicFood> basicFoods = new ArrayList<>();
     int howManyFood = 1;
     int score = 0;
     int highestScore = 0;
@@ -37,7 +39,7 @@ public class Field extends Pane {
     }
 
     public void addFood() {
-        int toAdd = howManyFood - foods.size();
+        int toAdd = howManyFood - basicFoods.size();
         for(int i=0; i<toAdd; i++) {
             Random rand = new Random();
             boolean foodOnSnake;
@@ -53,15 +55,15 @@ public class Field extends Pane {
                     }
                 }
             } while (foodOnSnake);
-            Food f = new Food(positionX, positionY);
+            BasicFood f = new BasicFood(positionX, positionY);
             getChildren().add(f);
-            foods.add(f);
+            basicFoods.add(f);
         }
     }
 
-    public void removeFood(Food food) {
-        getChildren().remove(food);
-        foods.remove(food);
+    public void removeFood(BasicFood basicFood) {
+        getChildren().remove(basicFood);
+        basicFoods.remove(basicFood);
     }
 
     public void removeExtraFood(ExtraFood extraFood) {
@@ -106,14 +108,14 @@ public class Field extends Pane {
     }
 
     public boolean isEaten() {
-        if (foods == null) {
+        if (basicFoods == null) {
             return false;
         }
         updateHighScore();
-        for (Food food : foods) {
-            if (snake.head.positionX == food.positionX && snake.head.positionY == food.positionY) {
+        for (BasicFood basicFood : basicFoods) {
+            if (snake.head.positionX == basicFood.positionX && snake.head.positionY == basicFood.positionY) {
                 needMoreSpeed();
-                removeFood(food);
+                removeFood(basicFood);
                 score+=1;
                 return true;
             }
