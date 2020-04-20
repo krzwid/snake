@@ -9,6 +9,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -32,12 +35,23 @@ public class Main extends Application {
 
         field.addSnake(new Snake(initialLength, field));
 
+        HBox labels = new HBox(5);
         Label scoreLabel = new Label("Score: 0");
         scoreLabel.setFont(Font.font("tahoma", 30));
 
         Label highestScoreLabel = new Label("Highest score: 0");
         highestScoreLabel.setFont(Font.font("tahoma", 30));
 
+        scoreLabel.setAlignment(Pos.TOP_LEFT);
+        Region betweenScores = new Region();
+
+        highestScoreLabel.setAlignment(Pos.TOP_RIGHT);
+        HBox.setHgrow(betweenScores, Priority.ALWAYS);
+
+        labels.setAlignment(Pos.BASELINE_CENTER);
+        labels.getChildren().add(scoreLabel);
+        labels.getChildren().add(betweenScores);
+        labels.getChildren().add(highestScoreLabel);
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -69,7 +83,7 @@ public class Main extends Application {
                             field.highestScore = highestScore;
                             scoreLabel.setText("Score: 0");
                             root.getChildren().add(field);
-                            root.getChildren().addAll(scoreLabel,highestScoreLabel);
+                            root.getChildren().add(labels);
                             start();
                         });
 
@@ -84,7 +98,7 @@ public class Main extends Application {
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(10, 20, 10, 20));
         root.getChildren().add(field);
-        root.getChildren().addAll(scoreLabel,highestScoreLabel);
+        root.getChildren().add(labels);
 
         Scene scene = new Scene(root);
 

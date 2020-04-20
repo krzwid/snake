@@ -15,8 +15,8 @@ public class Block extends Rectangle {
         setTranslateX(this.positionX * Main.BLOCK_SIZE);
         setTranslateY(this.positionY * Main.BLOCK_SIZE);
         this.previous = previous;
-        maximumX = field.fieldWidth-1;
-        maximumY = field.fieldHeight-1;
+        maximumX = field.width-1;
+        maximumY = field.height-1;
     }
 
     public void update() {

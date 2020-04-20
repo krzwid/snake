@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Field extends Pane {
-    int fieldWidth, fieldHeight;
+    public final int width, height;
     ArrayList<Block> blocks = new ArrayList<>();
     ExtraFood extraFood;
     Snake snake;
@@ -20,22 +20,14 @@ public class Field extends Pane {
     int speeding = 5;
 
     public Field(int width, int height) {
-        this.fieldWidth = width;
-        this.fieldHeight = height;
+        this.width = width;
+        this.height = height;
 
         setMinSize(width * Main.BLOCK_SIZE, height * Main.BLOCK_SIZE);
         setBackground(new Background(new BackgroundFill(Color.BEIGE, null, null)));
         setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(1))));
 
         addFood();
-    }
-
-    public int getFieldWidth() {
-        return fieldWidth;
-    }
-
-    public int getFieldHeight() {
-        return fieldHeight;
     }
 
     public void addFood() {
@@ -46,8 +38,8 @@ public class Field extends Pane {
             int positionX, positionY;
             do {
                 foodOnSnake = false;
-                positionX = rand.nextInt(fieldWidth - 1);
-                positionY = rand.nextInt(fieldHeight - 1);
+                positionX = rand.nextInt(width - 1);
+                positionY = rand.nextInt(height - 1);
                 for (Block body : blocks) {
                     if (body.positionX == positionX && body.positionY == positionY) {
                         foodOnSnake = true;
@@ -68,7 +60,6 @@ public class Field extends Pane {
 
     public void removeExtraFood(ExtraFood extraFood) {
         getChildren().remove(extraFood);
-        extraFood = null;
     }
 
     public void addSnake(Snake snake) {
@@ -157,8 +148,8 @@ public class Field extends Pane {
         int positionX, positionY;
         do {
             foodOnSnake = false;
-            positionX = rand.nextInt(fieldWidth - 1);
-            positionY = rand.nextInt(fieldHeight - 1);
+            positionX = rand.nextInt(width - 1);
+            positionY = rand.nextInt(height - 1);
             for (Block body : blocks) {
                 if (body.positionX == positionX && body.positionY == positionY) {
                     foodOnSnake = true;

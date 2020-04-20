@@ -1,9 +1,5 @@
 package sample;
-
-
-
 import javafx.scene.paint.Color;
-
 import java.util.ArrayList;
 
 public class Snake {
@@ -13,8 +9,8 @@ public class Snake {
     Block tail;
 
     public Snake(int initialLength, Field field) {
-        int initialPositionX = field.getFieldWidth() / 2;
-        int initialPositionY = field.getFieldHeight() / 2;
+        int initialPositionX = field.width/ 2;
+        int initialPositionY = field.height/ 2;
         head = new Block(initialPositionX, initialPositionY, null, field);
         blocks.add(head);
         head.setFill(Color.BLUE);

@@ -3,7 +3,7 @@ import javafx.scene.shape.Rectangle;
 import sample.Main;
 
 public abstract class Food extends Rectangle{
-    int positionX, positionY;
+    public final int positionX, positionY;
     public Food(int positionX, int positionY) {
         super(Main.BLOCK_SIZE, Main.BLOCK_SIZE);
         this.positionX = positionX;
