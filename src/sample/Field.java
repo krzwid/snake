@@ -4,20 +4,22 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import sample.food.BasicFood;
 import sample.food.ExtraFood;
+import sample.food.Food;
+import sample.food.SlowFood;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Field extends Pane {
     public final int width, height;
-    ArrayList<Block> blocks = new ArrayList<>();
-    ExtraFood extraFood;
     Snake snake;
-    ArrayList<BasicFood> basicFoods = new ArrayList<>();
+    ArrayList<Block> blocks = new ArrayList<>();
+    ArrayList<Food> foods = new ArrayList<>();
     int howManyFood = 1;
     int score = 0;
     int highestScore = 0;
     int speeding = 5;
+    boolean slowed = false;
 
     public Field(int width, int height) {
         this.width = width;
@@ -30,58 +32,11 @@ public class Field extends Pane {
         addFood();
     }
 
-    public void addFood() {
-        int toAdd = howManyFood - basicFoods.size();
-        for(int i=0; i<toAdd; i++) {
-            Random rand = new Random();
-            boolean foodOnSnake;
-            int positionX, positionY;
-            do {
-                foodOnSnake = false;
-                positionX = rand.nextInt(width - 1);
-                positionY = rand.nextInt(height - 1);
-                for (Block body : blocks) {
-                    if (body.positionX == positionX && body.positionY == positionY) {
-                        foodOnSnake = true;
-                        break;
-                    }
-                }
-            } while (foodOnSnake);
-            BasicFood f = new BasicFood(positionX, positionY);
-            getChildren().add(f);
-            basicFoods.add(f);
-        }
-    }
-
-    public void removeFood(BasicFood basicFood) {
-        getChildren().remove(basicFood);
-        basicFoods.remove(basicFood);
-    }
-
-    public void removeExtraFood(ExtraFood extraFood) {
-        getChildren().remove(extraFood);
-    }
 
     public void addSnake(Snake snake) {
         this.snake = snake;
-        for (Block body: snake.blocks) {
+        for (Block body : snake.blocks) {
             addBlock(body);
-        }
-    }
-
-    public void update() {
-        for (Block body : blocks) {
-            body.update();
-        }
-        if (isEaten() || isEatenExtraFood()){
-            if(score % 5 == 0) {
-                howManyFood++;
-            }
-            if (score % 10 == 0){
-                addExtraFood();
-            }
-            addFood();
-            growSnake();
         }
     }
 
@@ -90,35 +45,29 @@ public class Field extends Pane {
         blocks.add(body);
     }
 
-    public void growSnake() {
+    public void update() {
+        for (Block body : blocks) {
+            body.update();
+        }
+        if (isEaten()) {
+            if (score % 5 == 0) howManyFood++;
+            if (score % 10 == 0) addExtraFood();
+            if (score % 15 == 0 && !slowed) addSlowFood();
+            addFood();
+            growSnake();
+        }
+    }
+
+    private void growSnake() {
         Block tail = new Block(snake.tail.oldPositionX, snake.tail.oldPositionY, snake.tail, this);
         tail.setFill(Color.GREEN);
         snake.tail = tail;
-
         addBlock(tail);
     }
 
-    public boolean isEaten() {
-        if (basicFoods == null) {
-            return false;
-        }
-        updateHighScore();
-        for (BasicFood basicFood : basicFoods) {
-            if (snake.head.positionX == basicFood.positionX && snake.head.positionY == basicFood.positionY) {
-                needMoreSpeed();
-                removeFood(basicFood);
-                score+=1;
-                return true;
-            }
-
-        }
-        return false;
-    }
-
-
     public boolean isDead() {
         for (Block body : blocks) {
-            if(body == snake.head) continue;
+            if (body == snake.head) continue;
             if (snake.head.positionX == body.positionX && snake.head.positionY == body.positionY) {
                 return true;
             }
@@ -126,7 +75,7 @@ public class Field extends Pane {
         return false;
     }
 
-    public void updateHighScore() {
+    private void updateHighScore() {
         if (score > highestScore) {
             highestScore = score;
         }
@@ -136,44 +85,88 @@ public class Field extends Pane {
         return highestScore != 0 && score == highestScore;
     }
 
-    public void needMoreSpeed() {
+    private void needMoreSpeed() {
         if (score % 3 == 2) {
             speeding += 3;
         }
     }
 
-    public void addExtraFood() {
+    private void addFood() {
+        int toAdd = howManyFood - foods.size();
+        for (int i = 0; i < toAdd; i++) {
+            Integer[] position = drawFoodPosition();
+            BasicFood food = new BasicFood(position[0], position[1]);
+            getChildren().add(food);
+            foods.add(food);
+        }
+    }
+
+    private void addSlowFood() {
+        Integer[] position = drawFoodPosition();
+        SlowFood slowFood = new SlowFood(position[0], position[1]);
+        getChildren().add(slowFood);
+        foods.add(slowFood);
+    }
+
+    private void addExtraFood() {
+        Integer[] position = drawFoodPosition();
+        ExtraFood extraFood = new ExtraFood(position[0], position[1]);
+        getChildren().add(extraFood);
+        foods.add(extraFood);
+    }
+
+    private Integer[] drawFoodPosition() {
+        Integer[] position = new Integer[2];
         Random rand = new Random();
         boolean foodOnSnake;
-        int positionX, positionY;
         do {
             foodOnSnake = false;
-            positionX = rand.nextInt(width - 1);
-            positionY = rand.nextInt(height - 1);
+            position[0] = rand.nextInt(width - 1);
+            position[1] = rand.nextInt(height - 1);
             for (Block body : blocks) {
-                if (body.positionX == positionX && body.positionY == positionY) {
+                if (body.positionX == position[0] && body.positionY == position[1]) {
+                    foodOnSnake = true;
+                    break;
+                }
+            }
+            for (Food food : foods) {
+                if (food.positionX == position[0] && food.positionY == position[1]) {
                     foodOnSnake = true;
                     break;
                 }
             }
         } while (foodOnSnake);
-        ExtraFood ef = new ExtraFood(positionX, positionY);
-        getChildren().add(ef);
-        extraFood = ef;
+        return position;
     }
 
-    public boolean isEatenExtraFood() {
-        if (extraFood == null) {
-            return false;
-        }
-        updateHighScore();
-        if (snake.head.positionX == extraFood.positionX && snake.head.positionY == extraFood.positionY) {
-            needMoreSpeed();
-            removeExtraFood(extraFood);
-            score += 2;
-            return true;
+    private boolean isEaten() {
+        if (foods == null) return false;
+
+        for (Food food : foods) {
+            if (snake.head.positionX == food.positionX && snake.head.positionY == food.positionY) {
+                needMoreSpeed();
+                removeFood(food);
+                if (food instanceof BasicFood) {
+                    score += 1;
+                    slowed = false;
+                }
+                if (food instanceof ExtraFood) {
+                    score += 3;
+                    slowed = false;
+                }
+                if (food instanceof SlowFood) {
+                    speeding -= 6;
+                    slowed = true;
+                }
+                updateHighScore();
+                return true;
+            }
         }
         return false;
     }
 
+    private void removeFood(Food food) {
+        getChildren().remove(food);
+        foods.remove(food);
+    }
 }
