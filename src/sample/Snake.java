@@ -1,16 +1,17 @@
 package sample;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Snake {
-    ArrayList<Block> blocks = new ArrayList<Block>();
+    List<Block> blocks = new ArrayList<>();
 
     Block head;
     Block tail;
 
     public Snake(int initialLength, Field field) {
-        int initialPositionX = field.width/ 2;
-        int initialPositionY = field.height/ 2;
+        final int initialPositionX = field.width/ 2;
+        final int initialPositionY = field.height/ 2;
         head = new Block(initialPositionX, initialPositionY, null, field);
         blocks.add(head);
         head.setFill(Color.BLUE);

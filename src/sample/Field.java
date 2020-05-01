@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Field extends Pane {
+    static final Random rand = new Random();
+
     public final int width, height;
     Snake snake;
     ArrayList<Block> blocks = new ArrayList<>();
@@ -31,7 +33,6 @@ public class Field extends Pane {
 
         addFood();
     }
-
 
     public void addSnake(Snake snake) {
         this.snake = snake;
@@ -94,7 +95,7 @@ public class Field extends Pane {
     private void addFood() {
         int toAdd = howManyFood - foods.size();
         for (int i = 0; i < toAdd; i++) {
-            Integer[] position = drawFoodPosition();
+            int[] position = drawFoodPosition();
             BasicFood food = new BasicFood(position[0], position[1]);
             getChildren().add(food);
             foods.add(food);
@@ -102,22 +103,21 @@ public class Field extends Pane {
     }
 
     private void addSlowFood() {
-        Integer[] position = drawFoodPosition();
+        int[] position = drawFoodPosition();
         SlowFood slowFood = new SlowFood(position[0], position[1]);
         getChildren().add(slowFood);
         foods.add(slowFood);
     }
 
     private void addExtraFood() {
-        Integer[] position = drawFoodPosition();
+        int[] position = drawFoodPosition();
         ExtraFood extraFood = new ExtraFood(position[0], position[1]);
         getChildren().add(extraFood);
         foods.add(extraFood);
     }
 
-    private Integer[] drawFoodPosition() {
-        Integer[] position = new Integer[2];
-        Random rand = new Random();
+    private int[] drawFoodPosition() {
+        int[] position = new int[2];
         boolean foodOnSnake;
         do {
             foodOnSnake = false;
@@ -146,18 +146,9 @@ public class Field extends Pane {
             if (snake.head.positionX == food.positionX && snake.head.positionY == food.positionY) {
                 needMoreSpeed();
                 removeFood(food);
-                if (food instanceof BasicFood) {
-                    score += 1;
-                    slowed = false;
-                }
-                if (food instanceof ExtraFood) {
-                    score += 3;
-                    slowed = false;
-                }
-                if (food instanceof SlowFood) {
-                    speeding -= 6;
-                    slowed = true;
-                }
+                score += food.getScore();
+                slowed = food.getScore() <= 0;
+                speeding += food.getSpeed();
                 updateHighScore();
                 return true;
             }

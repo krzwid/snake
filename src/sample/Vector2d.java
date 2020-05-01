@@ -17,27 +17,8 @@ public class Vector2d {
         return this.x == that.x && this.y == that.y;
     }
 
-    public void move(Direction direction, Vector2d maximum){
-        switch (direction){
-            case NORTH:
-                y--;
-                if(y < 0) y = maximum.y;
-                break;
-            case SOUTH:
-                y++;
-                if(y>maximum.y) y=0;
-                break;
-            case EAST:
-                x++;
-                if(x > maximum.x) x = 0;
-                break;
-            case WEST:
-                x--;
-                if(x < 0) x = maximum.x;
-                break;
-            default:
-                break;
-        }
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
-
 }
